@@ -4,10 +4,13 @@
 #   - Encryption
 
 resource "aws_s3_bucket" "bucket_state" {
-  bucket = var.bucket_name
+  provider = aws.backend
+  bucket   = var.bucket_name
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_state_encryption" {
+  provider = aws.backend
+
   bucket = aws_s3_bucket.bucket_state.id
 
   rule {
@@ -18,6 +21,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_state_encr
 }
 
 resource "aws_s3_bucket_versioning" "bucket_state_versioning" {
+  provider = aws.backend
+
   bucket = aws_s3_bucket.bucket_state.id
   versioning_configuration {
     status = "Enabled"
@@ -26,6 +31,8 @@ resource "aws_s3_bucket_versioning" "bucket_state_versioning" {
 
 
 resource "aws_s3_bucket_public_access_block" "bucket_state_public_block" {
+  provider = aws.backend
+
   bucket = aws_s3_bucket.bucket_state.id
 
   # Retroactively remove public access granted through public ACLs
@@ -44,6 +51,8 @@ resource "aws_s3_bucket_public_access_block" "bucket_state_public_block" {
 
 # Lock Table
 resource "aws_dynamodb_table" "terraform_lock" {
+  provider = aws.backend
+
   name         = var.bucket_lock_table
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
